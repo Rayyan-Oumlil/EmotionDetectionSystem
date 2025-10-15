@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Emotion Detection Project
 
 This repository contains code and resources for an emotion detection system using deep learning and computer vision. The project includes data preprocessing, augmentation, model training (CNN and ResNet), and a Tkinter-based GUI for real-time emotion recognition from webcam input.
