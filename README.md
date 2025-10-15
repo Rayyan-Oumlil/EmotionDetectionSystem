@@ -128,9 +128,3 @@ For details on each module, see the source files:
 - [preprocess.py](preprocess.py) - Image preprocessing
 
 ---
-
-**Credits:** Inspired by [CodeML_PolyAI_Winners_2025](https://github.com/GharibSidney/CodeML_PolyAI_Winners_2025) by [@GharibSidney](https://github.com/GharibSidney) and [@RahmaAmmari](https://github.com/RahmaAmmari).
-=======
-# EmotionDetectionSystem
-Real-time facial emotion detection system using deep learning and computer vision. Includes preprocessing, augmentation, model training, and live webcam inference with GUI.
->>>>>>> fd13723741d19c67fe791c4b418dc824cd748934
