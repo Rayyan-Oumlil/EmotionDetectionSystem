@@ -1,5 +1,9 @@
-# Datasets (excluded due to size ~150MB)
 train/
 test/
-train_preprocessed/
-train_preprocessed_augmented/
+*.pth
+__pycache__/
+*.pyc
+.DS_Store
+*.log
+*.tmp
+.ipynb_checkpoints/
