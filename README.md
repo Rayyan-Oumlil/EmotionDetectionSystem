@@ -62,18 +62,31 @@ pip install -r requirements.txt
 
 ## Usage
 
-### Training Model
+### Quick Start - Run the Application
 
-1. Open `model_training.ipynb` in Jupyter Notebook
-2. Run all cells to train the CNN model
-3. Model will be saved in the CNN folder
+**You can immediately run the emotion detection application with the pre-trained model:**
 
-### Running Application
-
-#### CNN Model
 ```bash
 python CNN/app_cnn.py
 ```
+
+This will launch a GUI application that uses your webcam for real-time emotion detection.
+
+### Training Your Own Model
+
+**To train a new model, you need a properly structured dataset:**
+
+1. **Dataset Requirements:**
+   - Organize your images in folders by emotion: `train/angry/`, `train/happy/`, etc.
+   - Supported emotions: angry, disgust, fear, happy, neutral, sad, surprise
+   - Images should be face images, preferably 48x48 pixels
+
+2. **Training Process:**
+   - Open `model_training.ipynb` in Jupyter Notebook
+   - Run all cells to train the CNN model
+   - Model will be saved in the CNN folder
+
+**Note:** The `train/` folder in this repository is for demonstration purposes only. For actual training, you need a larger, properly labeled dataset.
 
 ## Model Performance
 
