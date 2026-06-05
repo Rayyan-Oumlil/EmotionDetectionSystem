@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Emotion Detection — Live Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+<header>
+  <h1>Emotion Detection</h1>
+  <p class="sub">Real-time CNN inference over WebSocket · 7 classes · FER2013</p>
+</header>
+
+<main>
+  <section class="video-card">
+    <div class="video-wrap">
+      <video id="video" autoplay playsinline muted></video>
+      <canvas id="overlay"></canvas>
+    </div>
+    <div class="controls">
+      <button id="startBtn">Start</button>
+      <button id="stopBtn" disabled>Stop</button>
+      <span id="status" class="status">idle</span>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="emotion-now">
+      <div class="label">Detected emotion</div>
+      <div id="emotion" class="emotion-text">—</div>
+    </div>
+    <div class="probs">
+      <div class="label">Probabilities</div>
+      <div id="bars"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span id="fps">0 fps</span>
+  <a href="https://github.com/Rayyan-Oumlil/EmotionDetectionSystem" target="_blank" rel="noreferrer">source</a>
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

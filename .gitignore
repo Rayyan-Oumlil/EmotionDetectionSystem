@@ -1,9 +1,25 @@
+# Training data
 train/
+train_preprocessed*/
 test/
-*.pth
+
+# Session recordings
+sessions/
+
+# Model checkpoints (keep only the final deployed one)
+emotion_*.pth
+
+# Python
 __pycache__/
-*.pyc
-.DS_Store
-*.log
-*.tmp
+*.py[cod]
+*.egg-info/
+.env
+venv/
+.venv/
+
+# Jupyter
 .ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db

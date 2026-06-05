@@ -1,19 +1,16 @@
-# Core dependencies for Emotion Detection Project
-torch==2.8.0+cpu
-torchvision==0.23.0+cpu
-opencv-python==4.12.0.88
-pillow==11.3.0
-numpy==2.2.3
-pandas==2.3.1
-matplotlib==3.10.5
-scikit-learn==1.7.1
-tqdm==4.67.1
+# RTX 5060 / Blackwell — install PyTorch with CUDA 12.8 first:
+# pip install torch==2.7.0 torchvision==0.22.0 --index-url https://download.pytorch.org/whl/cu128
+torch==2.7.0
+torchvision==0.22.0
+opencv-python>=4.10.0
+pillow>=12.0.0
+numpy>=2.0.0
+pandas>=2.2.0
+matplotlib>=3.9.0
+scikit-learn>=1.5.0
+tqdm>=4.66.1
 
-# Optional: For CUDA support (GPU acceleration)
-# Uncomment the lines below if you have an NVIDIA GPU
-# torch==2.1.0+cu118
-# torchvision==0.16.0+cu118
-# --extra-index-url https://download.pytorch.org/whl/cu118
-
-# GUI (included with Python, but listed for completeness)
-# tkinter - comes pre-installed with Python
+# Web demo (FastAPI + WebSocket)
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+websockets>=13.0

@@ -1,6 +1,8 @@
 # Emotion Detection System
 
-Real-time facial emotion detection system using deep learning and computer vision. Includes preprocessing, augmentation, model training, and live webcam inference with GUI.
+![Live demo](demo.gif)
+
+Real-time facial emotion detection system using deep learning and computer vision. Includes preprocessing, augmentation, model training, and live webcam inference via tkinter GUI and a FastAPI + WebSocket web demo.
 
 ## About
 
@@ -43,8 +45,7 @@ EmotionDetectionSystem/
 ├── preprocess.py          # Data preprocessing
 ├── data_augmentation.py   # Data augmentation
 ├── model_training.ipynb   # Training notebook
-├── requirements.txt       # Dependencies
-└── test_template.csv      # Test data template
+└── requirements.txt       # Dependencies
 ```
 
 ## Installation
@@ -72,6 +73,21 @@ python CNN/app_cnn.py
 
 This will launch a GUI application that uses your webcam for real-time emotion detection.
 
+### Web Demo (FastAPI + WebSocket)
+
+For a browser-based live demo, run:
+
+```bash
+uvicorn main:app --reload --app-dir web --host 0.0.0.0 --port 8000
+```
+
+Then open `http://localhost:8000` and click **Start**. The browser captures webcam frames and streams them over WebSocket (`/ws/emotion`); the server runs face detection + emotion inference and returns the predicted emotion, full probability distribution, and face bounding box for each frame.
+
+Endpoints:
+- `GET /` — demo page
+- `GET /healthz` — model status + device
+- `WS /ws/emotion` — binary in (JPEG bytes), JSON out
+
 ### Training Your Own Model
 
 **To train a new model, you need a properly structured dataset:**
@@ -86,43 +102,28 @@ This will launch a GUI application that uses your webcam for real-time emotion d
    - Run all cells to train the CNN model
    - Model will be saved in the CNN folder
 
-**Note:** The `train/` folder in this repository is for demonstration purposes only. For actual training, you need a larger, properly labeled dataset.
-
-## Model Performance
-
-The CNN model is trained on the FER2013 dataset and can classify 7 different emotions with high accuracy.
-
 ## Dependencies
 
 - Python 3.7+
-- PyTorch
-- OpenCV
-- NumPy
-- Pandas
-- Matplotlib
-- Seaborn
-- Jupyter Notebook
+- PyTorch (>=1.9.0)
+- OpenCV (>=4.5.0)
+- Pillow (>=8.0.0)
+- NumPy (>=1.21.0)
+- Pandas (>=1.3.0)
+- Matplotlib (>=3.4.0)
+- Scikit-learn (>=1.0.0)
+- Tqdm (>=4.60.0)
+- Jupyter Notebook (for training)
+
+All dependencies are listed in `requirements.txt` and can be installed with:
+```bash
+pip install -r requirements.txt
+```
 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## Dataset Setup
-
-The training dataset (`train/` folder) is not included in this repository due to size constraints.
-
-To use the pre-trained models, simply run:
-```bash
-python CNN/app_cnn.py
-```
 
 ## Contact
 

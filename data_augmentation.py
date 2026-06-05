@@ -149,9 +149,6 @@ def create_augmented_dataset(dataset_path: str, output_path: str = None, augment
                     ("rot15", lambda: rotate_image(str(img_file), 15)),
                     ("rot_15", lambda: rotate_image(str(img_file), -15)),
                     ("flip_h", lambda: flip_image(str(img_file), 1)),
-                    # ("flip_v", lambda: flip_image(str(img_file), 0)),
-                    # ("bright", lambda: adjust_brightness(str(img_file), 1.3, 40)),
-                    # ("dark", lambda: adjust_brightness(str(img_file), 0.7, -20)),
                 ]
                 
                 # Apply augmentations up to the specified factor
@@ -256,21 +253,3 @@ if __name__ == "__main__":
         analyze_dataset_structure("train_preprocessed_augmented")
     else:
         print("Augmentation cancelled.")
-
-    # Original single image example (your existing code):
-    # input_image_path = 'train_preprocessed/angry/Training_99518394.jpg'
-    # output_image_path = 'noisy_image.jpg'
-    
-    # if os.path.exists(input_image_path):
-    #     noisy_img = add_gaussian_noise(input_image_path)
-    #     if noisy_img is not None:
-    #         cv2.imwrite(output_image_path, noisy_img)
-    #         print(f"Noisy image saved to {output_image_path}")
-            
-    #         # Display images (comment out if running without display)
-    #         cv2.imshow('Original Image', cv2.imread(input_image_path))
-    #         cv2.imshow('Noisy Image', noisy_img)
-    #         cv2.waitKey(0)
-    #         cv2.destroyAllWindows()
-    # else:
-    #     print("Example image path not found. Please update the path or use the dataset augmentation functions.")

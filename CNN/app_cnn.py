@@ -1,3 +1,4 @@
+import sys
 import tkinter as tk
 from tkinter import ttk, messagebox
 import cv2
@@ -8,73 +9,10 @@ import threading
 import time
 import os
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
-import pandas as pd
 
-
-class EmotionCNN(nn.Module):
-    def __init__(self, num_classes=7):
-        super(EmotionCNN, self).__init__()
-        # Block 1
-        self.conv1_1 = nn.Conv2d(1, 32, kernel_size=3, padding=1)
-        self.bn1_1 = nn.BatchNorm2d(32)
-        self.conv1_2 = nn.Conv2d(32, 32, kernel_size=3, padding=1)
-        self.bn1_2 = nn.BatchNorm2d(32)
-        self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.dropout1 = nn.Dropout(0.25)
-        
-        # Block 2
-        self.conv2_1 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
-        self.bn2_1 = nn.BatchNorm2d(64)
-        self.conv2_2 = nn.Conv2d(64, 64, kernel_size=3, padding=1)
-        self.bn2_2 = nn.BatchNorm2d(64)
-        self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.dropout2 = nn.Dropout(0.25)
-        
-        # Block 3
-        self.conv3_1 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
-        self.bn3_1 = nn.BatchNorm2d(128)
-        self.conv3_2 = nn.Conv2d(128, 128, kernel_size=3, padding=1)
-        self.bn3_2 = nn.BatchNorm2d(128)
-        self.pool3 = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.dropout3 = nn.Dropout(0.25)
-        
-        # Fully connected layers
-        # After 3 pooling layers: 48 -> 24 -> 12 -> 6
-        self.fc1 = nn.Linear(128 * 6 * 6, 256)
-        self.bn_fc = nn.BatchNorm1d(256)
-        self.dropout_fc = nn.Dropout(0.5)
-        self.fc2 = nn.Linear(256, num_classes)
-    
-    def forward(self, x):
-        # Block 1
-        x = F.relu(self.bn1_1(self.conv1_1(x)))
-        x = F.relu(self.bn1_2(self.conv1_2(x)))
-        x = self.pool1(x)
-        x = self.dropout1(x)
-        
-        # Block 2
-        x = F.relu(self.bn2_1(self.conv2_1(x)))
-        x = F.relu(self.bn2_2(self.conv2_2(x)))
-        x = self.pool2(x)
-        x = self.dropout2(x)
-        
-        # Block 3
-        x = F.relu(self.bn3_1(self.conv3_1(x)))
-        x = F.relu(self.bn3_2(self.conv3_2(x)))
-        x = self.pool3(x)
-        x = self.dropout3(x)
-        
-        # Flatten
-        x = x.view(x.size(0), -1)
-        
-        # Fully connected layers
-        x = F.relu(self.bn_fc(self.fc1(x)))
-        x = self.dropout_fc(x)
-        x = self.fc2(x)
-        
-        return x
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from cnn import EmotionCNN
 
 
 class EmotionDetectorApp:
@@ -85,16 +23,17 @@ class EmotionDetectorApp:
         self.root.configure(bg='#f5f7fa')
         
     
-        self.model_path = 'emotionCNN.pth'  
-        
+        _base = os.path.dirname(os.path.abspath(__file__))
+        self.model_path = os.path.join(_base, 'emotionCNN.pth')
+
         self.emotion_image_paths = {
-            'angry': 'images/colere.png',
-            'disgust': 'images/degout.png',
-            'fear': 'images/peur.png',
-            'happy': 'images/joie.png',
-            'sad': 'images/tristesse.png',
-            'surprise': 'images/surprise.png',
-            'neutral': 'images/neutre.png'
+            'angry':    os.path.join(_base, 'images', 'colere.png'),
+            'disgust':  os.path.join(_base, 'images', 'degout.png'),
+            'fear':     os.path.join(_base, 'images', 'peur.png'),
+            'happy':    os.path.join(_base, 'images', 'joie.png'),
+            'sad':      os.path.join(_base, 'images', 'tristesse.png'),
+            'surprise': os.path.join(_base, 'images', 'surprise.png'),
+            'neutral':  os.path.join(_base, 'images', 'neutre.png'),
         }
         
         
@@ -106,18 +45,17 @@ class EmotionDetectorApp:
         # Session recording (video only)
         self.is_recording = False
         self.video_writer = None
-        self.recording_start_time = None
         
         self.emotions = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
-        
+
         self.emotion_colors = {
-            'angry': '#ef4444',
-            'disgust': '#8b5cf6',
-            'fear': "#ffaf02",
-            'happy': "#eeff00",
-            'sad': '#3b82f6',
+            'angry':    '#ef4444',
+            'disgust':  '#8b5cf6',
+            'fear':     '#ffaf02',
+            'happy':    '#eeff00',
+            'sad':      '#3b82f6',
             'surprise': '#10b981',
-            'neutral': '#6b7280'
+            'neutral':  '#6b7280',
         }
         self.emotion_history = deque(maxlen=50)
         
@@ -135,15 +73,14 @@ class EmotionDetectorApp:
             self.face_cascade = cv2.CascadeClassifier(
                 cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
             )
-        except:
-            messagebox.showerror("Erreur", "Impossible de charger le détecteur de visage")
+        except Exception as e:
+            messagebox.showerror("Erreur", f"Impossible de charger le détecteur de visage: {e}")
         
         self.load_emotion_images()
         
         # Create sessions directory
-        self.sessions_dir = "sessions"
-        if not os.path.exists(self.sessions_dir):
-            os.makedirs(self.sessions_dir)
+        self.sessions_dir = os.path.join(_base, 'sessions')
+        os.makedirs(self.sessions_dir, exist_ok=True)
         
         self.setup_ui()
     
@@ -160,7 +97,7 @@ class EmotionDetectorApp:
             
             self.model = EmotionCNN()
             
-            checkpoint = torch.load(self.model_path, map_location=self.device)
+            checkpoint = torch.load(self.model_path, map_location=self.device, weights_only=True)
             
             # Handle different checkpoint formats
             if isinstance(checkpoint, dict):
@@ -178,7 +115,6 @@ class EmotionDetectorApp:
             self.model.eval()
             
             print(f"✓ Modèle chargé avec succès depuis {self.model_path}")
-            # messagebox.showinfo("Succès", "Modèle PyTorch chargé avec succès!")
             
         except Exception as e:
             messagebox.showerror(
@@ -427,22 +363,14 @@ class EmotionDetectorApp:
         
     def preprocess_face(self, face_img):
         """Prétraiter l'image du visage pour le modèle PyTorch"""
-        # Resize to model input size (48x48)
         face_img = cv2.resize(face_img, (48, 48))
-        
-        # Convert to grayscale if needed
+
         if len(face_img.shape) == 3:
             face_img = cv2.cvtColor(face_img, cv2.COLOR_BGR2GRAY)
-        
-        # Normalize to [0, 1]
-        face_img = face_img / 255.0
-        
-        # Convert to PyTorch tensor
-        face_tensor = torch.from_numpy(face_img).float()
-        
-        # Add batch and channel dimensions: (1, 1, 48, 48)
+
+        face_tensor = torch.from_numpy(face_img / 255.0).float()
         face_tensor = face_tensor.unsqueeze(0).unsqueeze(0)
-        
+        face_tensor = (face_tensor - 0.5) / 0.5  # match training Normalize(mean=0.5, std=0.5)
         return face_tensor
     
     def predict_emotion(self, face_img):
@@ -591,7 +519,6 @@ class EmotionDetectorApp:
         )
         
         self.is_recording = True
-        self.recording_start_time = time.time()
         
         self.record_button.config(
             text="⏹️ Arrêter",
